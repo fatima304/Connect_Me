@@ -1,21 +1,31 @@
-import 'package:connectme_app/features/auth/presentation/screens/auth_screen.dart';
-import 'package:connectme_app/features/auth/presentation/screens/login_screen.dart';
+import 'package:connectme_app/core/helper/injection.dart';
+import 'package:connectme_app/core/helper/login_state_save.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  setupDependencies();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      home: AuthScreen(authSection: LoginScreen()),
+      title: 'ConnectMe',
       debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        useMaterial3: true,
+      ),
+      home: const AuthWrapper(),
     );
   }
 }
+

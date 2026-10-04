@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "436524335615",
+    "project_id": "connectme-7b192",
+    "storage_bucket": "connectme-7b192.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:436524335615:android:0a64490cf57213ab0927ca",
+        "android_client_info": {
+          "package_name": "com.example.connectme_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKMMyJpIi1LGyoLO5iyAmG5b8e0ewQehE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

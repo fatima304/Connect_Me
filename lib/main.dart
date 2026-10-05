@@ -2,7 +2,6 @@ import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/core/helper/login_state_save.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 
 void main() async {

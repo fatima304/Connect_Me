@@ -2,6 +2,7 @@
 // If user is already signed in, skip login screen and go to Home
 // This implements the auth state persistence requirement
 import 'package:connectme_app/presentation/screens/auth_screen.dart';
+import 'package:connectme_app/presentation/screens/home_screen.dart';
 import 'package:connectme_app/presentation/screens/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -22,18 +23,7 @@ class AuthWrapper extends StatelessWidget {
 
         if (snapshot.hasData) {
           // User is signed in, navigate to Home Screen
-          // TODO: Replace with actual HomeScreen when implemented
-          return const Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text('Home Screen'),
-                  Text('(To be implemented)'),
-                ],
-              ),
-            ),
-          );
+          return const HomeScreen();
         }
 
         // User is not signed in, show Login Screen

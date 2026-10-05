@@ -1,3 +1,4 @@
+import 'package:connectme_app/core/constants/app_colors.dart';
 import 'package:connectme_app/core/constants/app_images.dart';
 import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/presentation/blocs/auth_cubit.dart';
@@ -43,7 +44,7 @@ class AuthScreen extends StatelessWidget {
                       minHeight: MediaQuery.of(context).size.height * 0.60,
                     ),
                     decoration: const BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.white,
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),

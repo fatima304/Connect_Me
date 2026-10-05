@@ -2,9 +2,11 @@ import 'package:connectme_app/core/constants/app_colors.dart';
 import 'package:connectme_app/core/constants/app_images.dart';
 import 'package:connectme_app/core/helper/validator.dart';
 import 'package:connectme_app/core/style/app_text_styles.dart';
+import 'package:connectme_app/core/style/app_font_weight.dart';
 import 'package:connectme_app/presentation/blocs/auth_cubit.dart';
 import 'package:connectme_app/presentation/blocs/auth_state.dart';
 import 'package:connectme_app/presentation/screens/auth_screen.dart';
+import 'package:connectme_app/presentation/screens/home_screen.dart';
 import 'package:connectme_app/presentation/screens/signup_screen.dart';
 import 'package:connectme_app/presentation/widgets/custom_button.dart';
 import 'package:connectme_app/presentation/widgets/custom_text_form_field.dart';
@@ -44,13 +46,10 @@ class _LoginScreenState extends State<LoginScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccess) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(const SnackBar(content: Text('Login successful!')));
-          // TODO: Navigate to Home Screen when it's implemented
-          // Navigator.pushReplacement(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => HomeScreen()),
-          // );
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
         }
         if (state is AuthError) {
           ScaffoldMessenger.of(context)
@@ -108,10 +107,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   TextSpan(
                     text: 'Don\'t have an account? ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w400,
+                    style: AppTextStyles.caption.copyWith(
+                      color: AppColors.darkGrey,
                     ),
                   ),
                   TextSpan(
@@ -126,10 +123,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         );
                       },
                     text: 'Sign Up',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: AppColors.primaryColor,
-                      fontWeight: FontWeight.w600,
+                    style: AppTextStyles.link.copyWith(
+                      fontWeight: AppFontWeight.semiBold,
                     ),
                   ),
                 ],

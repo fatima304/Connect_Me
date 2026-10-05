@@ -11,4 +11,10 @@ class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+  static const lightPurple = Color(0xFFE8E8FC);
+  static const textGrey = Color(0xFF9E9E9E);
+  static const textDark = Color(0xFF333333);
+  static const white = Colors.white;
+  static const black = Colors.black;
+  static const transparent = Colors.transparent;
 }

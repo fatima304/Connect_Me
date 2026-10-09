@@ -36,32 +36,35 @@ class PostCubit extends Cubit<PostState> {
   }
 
   // Creates a new post
-  Future<void> createPost({
-    required String authorName,
-    required String content,
-  }) async {
-    emit(PostCreating());
 
-    final result = await _createPost(authorName: authorName, content: content);
+Future<void> createPost({
+  required String authorId,
+  required String authorName,
+  required String content,
+}) async {
+  emit(PostCreating());
 
-    result.fold(
-      (failure) {
-        emit(PostError(failure.message));
-      },
-      (_) {
-        emit(PostCreated());
-        // The real-time stream will automatically update the posts list
-        // So we return to the loaded state after a brief delay
-        Future.delayed(const Duration(milliseconds: 500), () {
-          // Re-emit the current posts if available
-          if (state is PostLoaded) {
-            emit(state);
-          }
-        });
-      },
-    );
-  }
+  final result = await _createPost(
+    authorId: authorId,
+    authorName: authorName,
+    content: content,
+  );
 
+  result.fold(
+    (failure) {
+      emit(PostError(failure.message));
+    },
+    (_) {
+      emit(PostCreated());
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (state is PostLoaded) {
+          emit(state);
+        }
+      });
+    },
+  );
+}
   @override
   Future<void> close() {
     // Cancel the stream subscription to prevent memory leaks

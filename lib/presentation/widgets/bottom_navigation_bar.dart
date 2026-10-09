@@ -22,7 +22,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
         height: 80,
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.black.withValues(alpha: 0.05),
@@ -64,6 +66,7 @@ class BottomNavigationBarWidget extends StatelessWidget {
                 ],
               ),
             ),
+
             // Floating action button
             Positioned(
               left: 0,
@@ -80,13 +83,19 @@ class BottomNavigationBarWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryColor.withValues(alpha: 0.3),
+                          color: AppColors.primaryColor.withValues(
+                            alpha: 0.3,
+                          ),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: Image.asset(AppImages.add, width: 28, height: 28),
+                    child: Image.asset(
+                      AppImages.add,
+                      width: 28,
+                      height: 28,
+                    ),
                   ),
                 ),
               ),
@@ -108,7 +117,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
         image,
         width: 24,
         height: 24,
-        color: isSelected ? AppColors.primaryColor : AppColors.textGrey,
+        color: isSelected
+            ? AppColors.primaryColor
+            : AppColors.textGrey,
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:connectme_app/core/helper/injection.dart';
+import 'package:connectme_app/core/helper/login_state_save.dart';
 import 'package:connectme_app/presentation/screens/auth_screen.dart';
 import 'package:connectme_app/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const AuthScreen(authSection: LoginScreen()),
+      home: const AuthWrapper(), // Use AuthWrapper to handle authentication state
     );
   }
 }

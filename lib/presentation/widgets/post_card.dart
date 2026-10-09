@@ -1,26 +1,31 @@
-import 'package:connectme_app/core/constants/app_images.dart';
-import 'package:flutter/material.dart';
 import 'package:connectme_app/core/constants/app_colors.dart';
-import 'package:connectme_app/core/style/app_text_styles.dart';
+import 'package:connectme_app/core/constants/app_images.dart';
 import 'package:connectme_app/core/style/app_font_weight.dart';
+import 'package:connectme_app/core/style/app_text_styles.dart';
+import 'package:connectme_app/domain/entities/post.dart';
+import 'package:flutter/material.dart';
 
 class PostCard extends StatelessWidget {
-  const PostCard({
-    super.key,
-    required this.userName,
-    required this.userAvatar,
-    required this.timeAgo,
-    required this.postImage,
-    required this.commentsCount,
-    required this.likesCount,
-  });
+  const PostCard({super.key, required this.post});
 
-  final String userName;
-  final String userAvatar;
-  final String timeAgo;
-  final String postImage;
-  final int commentsCount;
-  final int likesCount;
+  final Post post;
+
+  String _getTimeAgo(DateTime dateTime) {
+    final now = DateTime.now();
+    final difference = now.difference(dateTime);
+
+    if (difference.inMinutes < 1) {
+      return 'Just now';
+    } else if (difference.inMinutes < 60) {
+      return '${difference.inMinutes} min ago';
+    } else if (difference.inHours < 24) {
+      return '${difference.inHours} hour${difference.inHours > 1 ? 's' : ''} ago';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} day${difference.inDays > 1 ? 's' : ''} ago';
+    } else {
+      return '${dateTime.day}/${dateTime.month}/${dateTime.year}';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,28 +50,22 @@ class PostCard extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                userAvatar.isNotEmpty
-                    ? CircleAvatar(
-                        radius: 20,
-                        backgroundImage: AssetImage(userAvatar),
-                        onBackgroundImageError: (exception, stackTrace) {},
-                      )
-                    : CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColors.fieldBackground,
-                        child: const Icon(
-                          Icons.person,
-                          color: AppColors.textGrey,
-                          size: 24,
-                        ),
-                      ),
+                CircleAvatar(
+                  radius: 20,
+                  backgroundColor: AppColors.fieldBackground,
+                  child: const Icon(
+                    Icons.person,
+                    color: AppColors.textGrey,
+                    size: 24,
+                  ),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        userName,
+                        post.authorName,
                         style: AppTextStyles.body.copyWith(
                           fontWeight: AppFontWeight.semiBold,
                         ),
@@ -74,48 +73,14 @@ class PostCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text(timeAgo, style: AppTextStyles.caption),
+                Text(_getTimeAgo(post.createdAt), style: AppTextStyles.caption),
               ],
             ),
           ),
-          // Post image
-          ClipRRect(
-            borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(16),
-            ),
-            child: postImage.isNotEmpty
-                ? Image.asset(
-                    postImage,
-                    width: double.infinity,
-                    height: 300,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        width: double.infinity,
-                        height: 300,
-                        color: AppColors.fieldBackground,
-                        child: const Center(
-                          child: Icon(
-                            Icons.image,
-                            size: 64,
-                            color: AppColors.textGrey,
-                          ),
-                        ),
-                      );
-                    },
-                  )
-                : Container(
-                    width: double.infinity,
-                    height: 300,
-                    color: AppColors.fieldBackground,
-                    child: const Center(
-                      child: Icon(
-                        Icons.image,
-                        size: 64,
-                        color: AppColors.textGrey,
-                      ),
-                    ),
-                  ),
+          // Post content
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Text(post.content, style: AppTextStyles.body),
           ),
           // Action buttons
           Padding(
@@ -128,13 +93,10 @@ class PostCard extends StatelessWidget {
                   height: 20,
                   color: AppColors.primaryColor,
                 ),
-                Spacer(),
+                const Spacer(),
                 Row(
                   children: [
-                    Text(
-                      commentsCount.toString(),
-                      style: AppTextStyles.smallBody,
-                    ),
+                    const Text('0', style: AppTextStyles.smallBody),
                     const SizedBox(width: 4),
                     Image.asset(AppImages.comment, width: 20, height: 20),
                   ],
@@ -142,7 +104,7 @@ class PostCard extends StatelessWidget {
                 const SizedBox(width: 16),
                 Row(
                   children: [
-                    Text(likesCount.toString(), style: AppTextStyles.smallBody),
+                    const Text('0', style: AppTextStyles.smallBody),
                     const SizedBox(width: 4),
                     Image.asset(AppImages.heart, width: 20, height: 20),
                   ],

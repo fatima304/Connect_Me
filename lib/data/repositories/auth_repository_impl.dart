@@ -23,10 +23,11 @@ class AuthRepositoryImpl implements AuthRepository {
     required String email,
     required String password,
   }) {
-    // Note: fullName is validated in the presentation layer
-    // Firebase Auth doesn't store displayName by default, 
-    // it would need to be set separately or stored in Firestore
-    return _authService.signUp(email: email, password: password);
+    return _authService.signUp(
+      email: email,
+      password: password,
+      fullName: fullName,
+    );
   }
 
   @override

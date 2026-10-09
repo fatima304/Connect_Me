@@ -1,9 +1,11 @@
 import 'package:connectme_app/core/constants/app_colors.dart';
+import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/core/helper/validator.dart';
 import 'package:connectme_app/core/style/app_text_styles.dart';
 import 'package:connectme_app/core/style/app_font_weight.dart';
 import 'package:connectme_app/presentation/blocs/auth_cubit.dart';
 import 'package:connectme_app/presentation/blocs/auth_state.dart';
+import 'package:connectme_app/presentation/blocs/post_cubit.dart';
 import 'package:connectme_app/presentation/screens/auth_screen.dart';
 import 'package:connectme_app/presentation/screens/home_screen.dart';
 import 'package:connectme_app/presentation/screens/login_screen.dart';
@@ -50,10 +52,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return BlocListener<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is AuthSuccess) {
-       
+          // Navigate to HomeScreen with PostCubit provider
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),
+            MaterialPageRoute(
+              builder: (context) => BlocProvider(
+                create: (context) => getIt<PostCubit>(),
+                child: const HomeScreen(),
+              ),
+            ),
           );
         }
 

@@ -1,0 +1,524 @@
+I reviewed your Home Feature audit.
+
+Now I want you to FIX the identified Home Feature issues, but keep the implementation proportional to the assignment.
+
+## VERY IMPORTANT
+
+Do NOT rewrite the Home feature.
+
+Do NOT refactor unrelated code.
+
+Do NOT change the working authentication flow.
+
+Do NOT change Profile, Maps, or other future features.
+
+The current Home feature already works at runtime for:
+
+* Login → Home
+* Sign Up → Home
+* Firestore posts
+* Full author name
+* Create Post
+* PostCubit
+* Bottom Navigation
+
+Preserve all of that.
+
+Only fix the specific issues identified in the audit below.
+
+---
+
+# 1. FIX THE FACTORY PATTERN PROPERLY
+
+This is the most important issue.
+
+The assignment specifically requires:
+
+> PostRepository follows the Factory Pattern to instantiate/select the correct datasource (remote Firestore vs local cache).
+
+The current implementation has `PostDataSourceFactory`, but it only exposes getters such as:
+
+```dart
+getRemoteDataSource()
+getLocalDataSource()
+```
+
+and the repository always uses the remote datasource.
+
+That is only a partial Factory Pattern implementation.
+
+## Required Fix
+
+Inspect the current:
+
+* `PostDataSourceFactory`
+* `PostRepositoryImpl`
+* `FirestorePostDataSource`
+* `LocalPostDataSource`
+* DI registration
+
+Implement the Factory Pattern so the factory actually **selects/returns the appropriate datasource**.
+
+However:
+
+### DO NOT build a full offline-first system.
+
+The assignment does NOT require a complete offline caching architecture.
+
+We only need a clean, understandable implementation that demonstrates the required Factory Pattern.
+
+The Factory should be responsible for deciding which datasource the repository uses.
+
+For example, the architecture may conceptually be:
+
+```text
+PostRepository
+      ↓
+PostDataSourceFactory
+      ↓
+   ┌───────────────┐
+   │               │
+Remote          Local
+Firestore       Cache
+```
+
+The exact implementation is up to you, but it must genuinely demonstrate the Factory Pattern rather than just having two getter methods.
+
+## Important
+
+Do NOT add unnecessary packages or complicated connectivity infrastructure unless the existing project already uses one.
+
+Keep it Junior-friendly and proportional to the assignment.
+
+If a simple strategy/configuration is enough to demonstrate datasource selection, prefer that over introducing a large offline system.
+
+The repository must still use the Factory.
+
+The current Firestore remote flow must remain the normal working flow.
+
+The existing Create Post and real-time Posts behavior MUST NOT break.
+
+---
+
+# 2. FIX POSTCREATING UI STATE
+
+The `PostCubit` already has:
+
+```text
+PostCreating
+```
+
+but the Home UI currently does not visibly handle it.
+
+Fix this.
+
+When the user presses the Post/Save button:
+
+```text
+User presses Post
+        ↓
+PostCreating
+        ↓
+Show loading/disabled state
+        ↓
+Firestore create
+        ↓
+Real-time stream updates posts
+```
+
+The user should receive clear visual feedback that the post is being created.
+
+Possible implementation:
+
+* Disable the Post button while creating.
+* Show a `CircularProgressIndicator` inside the button.
+* Prevent duplicate submissions.
+
+Prefer the simplest clean solution.
+
+Do NOT replace the entire dialog.
+
+Do NOT introduce unnecessary state management.
+
+---
+
+# 3. REMOVE THE Future.delayed HACK
+
+The audit identified that `PostCubit` uses a `Future.delayed` to return from `PostCreated` to `PostLoaded`.
+
+This should be removed if it is only being used as a timing workaround.
+
+We already have a real-time Firestore stream:
+
+```text
+snapshots()
+```
+
+Therefore the flow should rely on the stream to update the feed.
+
+Expected behavior:
+
+```text
+PostCreating
+      ↓
+Create post in Firestore
+      ↓
+Firestore snapshots()
+      ↓
+PostCubit receives updated posts
+      ↓
+PostLoaded(updated posts)
+```
+
+Do NOT use arbitrary delays such as:
+
+```dart
+Future.delayed(...)
+```
+
+to synchronize UI state with Firestore.
+
+Use the existing real-time stream correctly.
+
+## Important
+
+Be careful not to create duplicate subscriptions.
+
+Make sure:
+
+* The posts stream is subscribed once.
+* `PostCubit.close()` cancels the subscription.
+* Creating a post does not create another posts stream.
+* No memory leaks.
+* Existing real-time behavior remains intact.
+
+If `PostCreated` is no longer needed after this change, remove it only if it is genuinely unused.
+
+Do not remove states just for the sake of removing them.
+
+---
+
+# 4. IMPROVE EMPTY POST VALIDATION
+
+The current Create Post dialog checks:
+
+```text
+text.trim().isNotEmpty
+```
+
+which is good.
+
+But when the user tries to submit an empty post, there is no clear UI feedback.
+
+Improve this minimally.
+
+Preferred behavior:
+
+* Empty/whitespace-only content → do NOT call CreatePost.
+* Show a clear validation message.
+* Keep the dialog open.
+* User can correct the content.
+* Valid content → proceed normally.
+
+A simple inline error or disabled button is acceptable.
+
+Do NOT add a complicated validation framework.
+
+---
+
+# 5. LOCAL DATASOURCE — KEEP IT SIMPLE
+
+The audit mentioned:
+
+`LocalPostDataSource` is currently a placeholder.
+
+Do NOT turn this into a complete local database/cache system unless the assignment explicitly requires it.
+
+The purpose here is primarily to satisfy the required Factory Pattern cleanly.
+
+If the Factory requires a local datasource implementation, keep it minimal and clearly documented.
+
+Do not add:
+
+* Hive
+* SQLite
+* SharedPreferences
+* complicated cache invalidation
+* connectivity packages
+
+unless they are genuinely required by the assignment.
+
+---
+
+# 6. DO NOT OVER-ENGINEER RESPONSIVENESS
+
+The audit mentioned that Home does not explicitly use `MediaQuery` everywhere.
+
+Do NOT blindly add MediaQuery to every widget.
+
+The requirement is responsive UI.
+
+Only make responsiveness changes if the current Home layout has an actual issue or the task explicitly requires a specific MediaQuery usage.
+
+Do not change working dimensions unnecessarily.
+
+The Add Post FAB must remain fully visible.
+
+---
+
+# 7. PRESERVE EVERYTHING THAT IS ALREADY WORKING
+
+Do NOT break:
+
+### Authentication
+
+* Login → Home
+* Sign Up → Home
+* App starts at Login
+* No auth persistence for now
+* Google button remains static
+
+### Home
+
+* Firestore posts
+* Real-time updates
+* Newest-first ordering
+* Full author name
+* Timestamp
+* Post content
+* Empty state
+* Loading state
+* Error state
+* Retry
+* Create Post
+
+### Architecture
+
+* Clean Architecture
+* Data / Domain / Presentation
+* GetPosts
+* CreatePost
+* PostRepository
+* PostRepositoryImpl
+* GetIt
+* Factory Pattern
+* Firestore Singleton
+
+### UI
+
+* Bottom Navigation
+* Add Post FAB
+* Existing Home design
+* PostCard
+* Existing colors/styles/assets
+
+Do not make unrelated visual changes.
+
+---
+
+# 8. VERIFY THE FACTORY CAREFULLY
+
+After implementing the fix, inspect the final code and answer:
+
+### Is this now a genuine Factory Pattern?
+
+The answer should be based on actual behavior, not just class naming.
+
+The Factory should have responsibility for datasource selection/creation.
+
+The Repository should depend on the abstraction/Factory rather than directly deciding which datasource to use.
+
+Also make sure GetIt is not being mistakenly treated as the Factory Pattern.
+
+---
+
+# 9. VERIFY THE STATE FLOW
+
+After implementation, verify the complete PostCubit flow:
+
+### Loading posts
+
+```text
+PostInitial
+   ↓
+PostLoading
+   ↓
+PostLoaded
+```
+
+### Error
+
+```text
+PostLoading
+   ↓
+PostError
+```
+
+### Create post
+
+```text
+PostLoaded
+   ↓
+PostCreating
+   ↓
+Firestore create
+   ↓
+Real-time stream
+   ↓
+PostLoaded with new post
+```
+
+No arbitrary delays.
+
+No duplicate subscriptions.
+
+No memory leaks.
+
+---
+
+# 10. TESTING
+
+Run:
+
+```bash
+dart format .
+flutter analyze
+```
+
+Then run the app.
+
+Actually test:
+
+### Test 1
+
+Open Home.
+
+Posts load correctly.
+
+### Test 2
+
+Press Add Post.
+
+Dialog opens.
+
+### Test 3
+
+Submit empty content.
+
+Expected:
+
+* No Firestore document created.
+* Validation feedback appears.
+* Dialog remains open.
+
+### Test 4
+
+Create valid post.
+
+Expected:
+
+* Button shows creating/loading state.
+* Post is created.
+* New post appears automatically.
+* No app restart.
+* No manual refresh.
+* Full author name appears.
+
+### Test 5
+
+Create multiple posts quickly.
+
+Expected:
+
+* No duplicate submissions from repeated taps.
+* No duplicate stream subscriptions.
+* No ProviderNotFoundException.
+
+### Test 6
+
+Verify real-time behavior.
+
+If possible, create a post from another client/device and verify the Home feed updates.
+
+### Test 7
+
+Check Add Post FAB.
+
+Expected:
+
+* Fully visible.
+* Not clipped.
+* Correctly centered.
+* Still opens Create Post.
+* Works on current emulator/device.
+
+---
+
+# 11. FINAL AUDIT AFTER FIXES
+
+After making the changes, perform another focused audit of the Home Feature.
+
+Report:
+
+## A. Factory Pattern
+
+* What changed?
+* Why does it now satisfy the requirement?
+
+## B. PostCreating
+
+* How is the loading state displayed?
+* How are duplicate taps prevented?
+
+## C. State Management
+
+* Confirm `Future.delayed` workaround was removed.
+* Explain the new state flow.
+
+## D. Validation
+
+* How is empty content handled?
+
+## E. Runtime
+
+Report each as:
+
+* ✅ Verified
+* ❌ Failed
+* 🔍 Not Verified
+
+For:
+
+* Posts loading
+* Real-time updates
+* Create Post
+* Empty validation
+* Author name
+* FAB visibility
+* PostCreating UI
+* Error state
+* Retry
+
+## F. Analyze
+
+Report the exact result of:
+
+```bash
+flutter analyze
+```
+
+## G. Files Changed
+
+List every file changed and briefly explain why.
+
+---
+
+# FINAL IMPORTANT RULE
+
+Do NOT commit or push anything.
+
+Do NOT start implementing Profile or Maps.
+
+Do NOT make unrelated refactors.
+
+Fix Home only, verify it, then stop and give me the report.

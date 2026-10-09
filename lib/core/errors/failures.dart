@@ -20,3 +20,7 @@ class ValidationFailure extends Failure {
 class AuthenticationFailure extends Failure {
   AuthenticationFailure(super.message);
 }
+
+class FirestoreFailure extends Failure {
+  FirestoreFailure(super.message);
+}

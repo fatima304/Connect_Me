@@ -33,6 +33,12 @@ class AuthCubit extends Cubit<AuthState> {
           return 'An authentication error occurred: ${error.message}';
       }
     }
+
+    if (error.toString().contains('network') ||
+        error.toString().contains('connection')) {
+      return 'Network error. Please check your internet connection.';
+    }
+
     return 'An unexpected error occurred. Please try again.';
   }
 

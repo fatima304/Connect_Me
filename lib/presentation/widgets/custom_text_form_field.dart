@@ -111,10 +111,7 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
               const SizedBox(height: 6),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Text(
-                  field.errorText!,
-                  style: AppTextStyles.error,
-                ),
+                child: Text(field.errorText!, style: AppTextStyles.error),
               ),
             ],
           ],

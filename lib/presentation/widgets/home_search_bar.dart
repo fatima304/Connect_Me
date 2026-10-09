@@ -18,11 +18,7 @@ class HomeSearchBar extends StatelessWidget {
         decoration: InputDecoration(
           hintText: 'Search',
           hintStyle: AppTextStyles.hint,
-          prefixIcon: Image.asset(
-            AppImages.search,
-            width: 24,
-            height: 24,
-          ),
+          prefixIcon: Image.asset(AppImages.search, width: 24, height: 24),
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(
             horizontal: 16,

@@ -1,6 +1,10 @@
+import 'package:get_it/get_it.dart';
+import 'package:connectme_app/data/datasources/biometric_datasource.dart';
+import 'package:connectme_app/data/datasources/device_info_datasource.dart';
 import 'package:connectme_app/data/datasources/firestore_post_datasource.dart';
 import 'package:connectme_app/data/datasources/local_post_datasource.dart';
 import 'package:connectme_app/data/datasources/post_datasource_factory.dart';
+import 'package:connectme_app/data/datasources/profile_image_data_source.dart';
 import 'package:connectme_app/data/repositories/auth_repository_impl.dart';
 import 'package:connectme_app/data/repositories/post_repository_impl.dart';
 import 'package:connectme_app/domain/repositories/auth_repository.dart';
@@ -8,45 +12,45 @@ import 'package:connectme_app/domain/repositories/post_repository.dart';
 import 'package:connectme_app/domain/usecases/create_post.dart';
 import 'package:connectme_app/domain/usecases/get_posts.dart';
 import 'package:connectme_app/presentation/blocs/auth_cubit.dart';
+import 'package:connectme_app/presentation/blocs/biometric_cubit.dart';
+import 'package:connectme_app/presentation/blocs/device_info_cubit.dart';
 import 'package:connectme_app/presentation/blocs/post_cubit.dart';
+import 'package:connectme_app/presentation/blocs/profile_cubit.dart';
 import 'package:connectme_app/services/auth_service.dart';
 import 'package:connectme_app/services/firestore_service.dart';
-import 'package:get_it/get_it.dart';
 
-// Dependency Injection setup using GetIt
-// This container manages the lifecycle of all app dependencies
+// Dependency Injection setup
 final getIt = GetIt.instance;
 
 void setupDependencies() {
-  // Singleton Pattern: FirestoreService
-  // Only one instance exists throughout the app lifecycle
-  // The Singleton Pattern is implemented in the class itself with a private constructor
-  // and factory constructor, not just through GetIt registration
-  getIt.registerLazySingleton<FirestoreService>(() => FirestoreService());
+  // Services
+  getIt.registerLazySingleton<FirestoreService>(
+    () => FirestoreService(),
+  );
 
-  // Singleton Pattern: AuthService registered as singleton
-  // Only one instance exists throughout the app lifecycle
-  getIt.registerLazySingleton<AuthService>(() => AuthService());
+  getIt.registerLazySingleton<AuthService>(
+    () => AuthService(),
+  );
 
-  // Singleton Pattern: AuthRepository implementation registered as singleton
+  // Authentication
   getIt.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(getIt<AuthService>()),
   );
 
-  // Factory Pattern: AuthCubit registered as factory
-  // A new instance is created each time it's requested
-  getIt.registerFactory<AuthCubit>(() => AuthCubit(getIt<AuthRepository>()));
+  getIt.registerFactory<AuthCubit>(
+    () => AuthCubit(getIt<AuthRepository>()),
+  );
 
-  // Register datasources for posts
+  // Post data sources
   getIt.registerLazySingleton<FirestorePostDataSource>(
     () => FirestorePostDataSource(getIt<FirestoreService>()),
   );
 
-  getIt.registerLazySingleton<LocalPostDataSource>(() => LocalPostDataSource());
+  getIt.registerLazySingleton<LocalPostDataSource>(
+    () => LocalPostDataSource(),
+  );
 
-  // Factory Pattern: PostDataSourceFactory
-  // This factory is responsible for selecting the appropriate datasource
-  // (remote Firestore vs local cache) based on application needs
+  // Factory: selects the appropriate post data source
   getIt.registerFactory<PostDataSourceFactory>(
     () => PostDataSourceFactory(
       remoteDataSource: getIt<FirestorePostDataSource>(),
@@ -54,19 +58,57 @@ void setupDependencies() {
     ),
   );
 
-  // Singleton Pattern: PostRepository implementation registered as singleton
+  // Post repository
   getIt.registerLazySingleton<PostRepository>(
     () => PostRepositoryImpl(getIt<PostDataSourceFactory>()),
   );
 
-  // Register use cases
-  getIt.registerFactory<GetPosts>(() => GetPosts(getIt<PostRepository>()));
+  // Post use cases
+  getIt.registerFactory<GetPosts>(
+    () => GetPosts(getIt<PostRepository>()),
+  );
 
-  getIt.registerFactory<CreatePost>(() => CreatePost(getIt<PostRepository>()));
+  getIt.registerFactory<CreatePost>(
+    () => CreatePost(getIt<PostRepository>()),
+  );
 
-  // Factory Pattern: PostCubit registered as factory
-  // A new instance is created each time it's requested
+  // Post Cubit
   getIt.registerFactory<PostCubit>(
-    () => PostCubit(getIt<GetPosts>(), getIt<CreatePost>()),
+    () => PostCubit(
+      getIt<GetPosts>(),
+      getIt<CreatePost>(),
+    ),
+  );
+
+  // Biometric authentication
+  getIt.registerLazySingleton<BiometricDataSource>(
+    () => BiometricDataSource(),
+  );
+
+  getIt.registerFactory<BiometricCubit>(
+    () => BiometricCubit(getIt<BiometricDataSource>()),
+  );
+
+  // Device information
+  getIt.registerLazySingleton<DeviceInfoDataSource>(
+    () => DeviceInfoDataSource(),
+  );
+
+  getIt.registerFactory<DeviceInfoCubit>(
+    () => DeviceInfoCubit(getIt<DeviceInfoDataSource>()),
+  );
+
+  // Local profile image storage
+  getIt.registerLazySingleton<ProfileImageDataSource>(
+    () => ProfileImageDataSource(),
+  );
+
+  // Profile
+  getIt.registerFactory<ProfileCubit>(
+    () => ProfileCubit(
+      getIt<AuthService>(),
+      getIt<FirestoreService>(),
+      getIt<ProfileImageDataSource>(),
+    ),
   );
 }

@@ -1,67 +1,70 @@
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectme_app/domain/entities/post.dart';
 
-// Data model for Post
-// Handles Firestore serialization/deserialization
-// Converts between Firestore data and domain Post entity
 class PostModel {
   final String id;
+  final String authorId;
   final String authorName;
   final String content;
   final DateTime createdAt;
 
   PostModel({
     required this.id,
+    this.authorId = '',
     required this.authorName,
     required this.content,
     required this.createdAt,
   });
 
-  // Factory constructor to create PostModel from Firestore data
-  // Handles safe conversion of Firestore Timestamp to DateTime
-  factory PostModel.fromJson(Map<String, dynamic> data, String id) {
-    // Safely handle createdAt timestamp
+  factory PostModel.fromJson(
+    Map<String, dynamic> data,
+    String id,
+  ) {
+    final createdAt = data['createdAt'];
+
     DateTime parsedCreatedAt;
-    if (data['createdAt'] is Timestamp) {
-      parsedCreatedAt = (data['createdAt'] as Timestamp).toDate();
-    } else if (data['createdAt'] is DateTime) {
-      parsedCreatedAt = data['createdAt'] as DateTime;
+
+    if (createdAt is Timestamp) {
+      parsedCreatedAt = createdAt.toDate();
+    } else if (createdAt is DateTime) {
+      parsedCreatedAt = createdAt;
     } else {
-      // Fallback to current time if timestamp is invalid
       parsedCreatedAt = DateTime.now();
     }
 
     return PostModel(
       id: id,
+      authorId: data['authorId'] as String? ?? '',
       authorName: data['authorName'] as String? ?? '',
       content: data['content'] as String? ?? '',
       createdAt: parsedCreatedAt,
     );
   }
 
-  // Converts PostModel to Firestore-compatible JSON
   Map<String, dynamic> toJson() {
     return {
+      'authorId': authorId,
       'authorName': authorName,
       'content': content,
       'createdAt': Timestamp.fromDate(createdAt),
     };
   }
 
-  // Converts PostModel to domain Post entity
   Post toEntity() {
     return Post(
       id: id,
+      authorId: authorId,
       authorName: authorName,
       content: content,
       createdAt: createdAt,
     );
   }
 
-  // Converts domain Post entity to PostModel
   factory PostModel.fromEntity(Post post) {
     return PostModel(
       id: post.id,
+      authorId: post.authorId,
       authorName: post.authorName,
       content: post.content,
       createdAt: post.createdAt,

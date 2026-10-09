@@ -32,27 +32,28 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<Either<Failure, void>> createPost({
-    required String authorName,
-    required String content,
-  }) async {
-    try {
-      // Use the remote Firestore datasource to create the post
-      // The factory provides the appropriate datasource
-      final remoteDataSource = _dataSourceFactory.getRemoteDataSource();
 
-      await remoteDataSource.createPost(
-        authorName: authorName,
-        content: content,
-      );
+@override
+Future<Either<Failure, void>> createPost({
+  required String authorId,
+  required String authorName,
+  required String content,
+}) async {
+  try {
+    final remoteDataSource =
+        _dataSourceFactory.getRemoteDataSource();
 
-      return const Right(null);
-    } catch (error) {
-      // Convert Firestore errors to domain failures
-      return Left(_handleFirestoreError(error));
-    }
+    await remoteDataSource.createPost(
+      authorId: authorId,
+      authorName: authorName,
+      content: content,
+    );
+
+    return const Right(null);
+  } catch (error) {
+    return Left(_handleFirestoreError(error));
   }
-
+}
   // Handles Firestore errors and converts them to user-friendly failures
   Failure _handleFirestoreError(dynamic error) {
     // Handle specific Firestore error codes

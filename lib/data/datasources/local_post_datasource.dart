@@ -24,18 +24,21 @@ class LocalPostDataSource {
   }
 
   // Creates a post in the local cache
-  Future<void> createPost({
-    required String authorName,
-    required String content,
-  }) async {
-    // In a real implementation, this would save to local storage
-    // For this assignment, we just add to the in-memory cache
-    final newPost = PostModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      authorName: authorName,
-      content: content,
-      createdAt: DateTime.now(),
-    );
-    _cachedPosts = [...(_cachedPosts ?? []), newPost];
-  }
+
+Future<void> createPost({
+  required String authorId,
+  required String authorName,
+  required String content,
+}) async {
+  final newPost = PostModel(
+    id: DateTime.now().millisecondsSinceEpoch.toString(),
+    authorId: authorId,
+    authorName: authorName,
+    content: content,
+    createdAt: DateTime.now(),
+  );
+
+  _cachedPosts = [...(_cachedPosts ?? []), newPost];
+}
+
 }

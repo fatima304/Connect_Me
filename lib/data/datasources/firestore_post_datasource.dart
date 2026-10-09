@@ -28,14 +28,17 @@ class FirestorePostDataSource {
   }
 
   // Creates a new post in Firestore
-  Future<void> createPost({
-    required String authorName,
-    required String content,
-  }) async {
-    await _firestoreService.postsCollection.add({
-      'authorName': authorName,
-      'content': content,
-      'createdAt': FieldValue.serverTimestamp(),
-    });
-  }
+ 
+Future<void> createPost({
+  required String authorId,
+  required String authorName,
+  required String content,
+}) async {
+  await _firestoreService.postsCollection.add({
+    'authorId': authorId,
+    'authorName': authorName,
+    'content': content,
+    'createdAt': FieldValue.serverTimestamp(),
+  });
 }
+ }

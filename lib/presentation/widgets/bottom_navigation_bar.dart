@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:connectme_app/core/constants/app_colors.dart';
 import 'package:connectme_app/core/constants/app_images.dart';
@@ -22,7 +23,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
         height: 80,
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(
+            top: Radius.circular(24),
+          ),
           boxShadow: [
             BoxShadow(
               color: AppColors.black.withValues(alpha: 0.05),
@@ -34,37 +37,26 @@ class BottomNavigationBarWidget extends StatelessWidget {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // Navigation icons
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 32),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildNavItem(
+                  _buildImageNavItem(
                     image: AppImages.home,
                     isSelected: currentIndex == 0,
                     onTap: () => onItemTapped(0),
                   ),
-                  _buildNavItem(
-                    image: AppImages.category,
-                    isSelected: currentIndex == 1,
-                    onTap: () => onItemTapped(1),
-                  ),
-                  const SizedBox(width: 56), // Space for FAB
-                  _buildNavItem(
-                    image: AppImages.notification,
+                  _buildMapNavItem(),
+                  const SizedBox(width: 56),
+                  _buildImageNavItem(
+                    image: AppImages.profile,
                     isSelected: currentIndex == 2,
                     onTap: () => onItemTapped(2),
-                  ),
-                  _buildNavItem(
-                    image: AppImages.profile,
-                    isSelected: currentIndex == 3,
-                    onTap: () => onItemTapped(3),
                   ),
                 ],
               ),
             ),
-            // Floating action button
             Positioned(
               left: 0,
               right: 0,
@@ -80,13 +72,19 @@ class BottomNavigationBarWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primaryColor.withValues(alpha: 0.3),
+                          color: AppColors.primaryColor.withValues(
+                            alpha: 0.3,
+                          ),
                           blurRadius: 10,
                           offset: const Offset(0, 4),
                         ),
                       ],
                     ),
-                    child: Image.asset(AppImages.add, width: 28, height: 28),
+                    child: Image.asset(
+                      AppImages.add,
+                      width: 28,
+                      height: 28,
+                    ),
                   ),
                 ),
               ),
@@ -97,7 +95,22 @@ class BottomNavigationBarWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildNavItem({
+  Widget _buildMapNavItem() {
+    final isSelected = currentIndex == 1;
+
+    return GestureDetector(
+      onTap: () => onItemTapped(1),
+      child: Icon(
+        Icons.map_outlined,
+        size: 26,
+        color: isSelected
+            ? AppColors.primaryColor
+            : AppColors.textGrey,
+      ),
+    );
+  }
+
+  Widget _buildImageNavItem({
     required String image,
     required bool isSelected,
     required VoidCallback onTap,
@@ -108,7 +121,9 @@ class BottomNavigationBarWidget extends StatelessWidget {
         image,
         width: 24,
         height: 24,
-        color: isSelected ? AppColors.primaryColor : AppColors.textGrey,
+        color: isSelected
+            ? AppColors.primaryColor
+            : AppColors.textGrey,
       ),
     );
   }

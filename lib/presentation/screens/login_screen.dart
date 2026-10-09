@@ -1,5 +1,4 @@
 import 'package:connectme_app/core/constants/app_colors.dart';
-import 'package:connectme_app/core/constants/app_images.dart';
 import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/core/helper/validator.dart';
 import 'package:connectme_app/core/style/app_text_styles.dart';
@@ -12,7 +11,6 @@ import 'package:connectme_app/presentation/screens/home_screen.dart';
 import 'package:connectme_app/presentation/screens/signup_screen.dart';
 import 'package:connectme_app/presentation/widgets/custom_button.dart';
 import 'package:connectme_app/presentation/widgets/custom_text_form_field.dart';
-import 'package:connectme_app/presentation/widgets/social_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,21 +93,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   );
                 }
               },
-            ),
-            Text(
-              'or login by',
-              style: AppTextStyles.textStyle16DarkGreyRegular.copyWith(
-                color: AppColors.primaryColor,
-              ),
-            ),
-            Row(
-              spacing: 10,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Google button is static/non-functional for future implementation
-                SocialWidget(img: AppImages.google),
-                SocialWidget(img: AppImages.facebook),
-              ],
             ),
             RichText(
               text: TextSpan(

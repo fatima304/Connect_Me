@@ -94,12 +94,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 }
               },
             ),
-            Text(
-              'or login by',
-              style: AppTextStyles.textStyle16DarkGreyRegular.copyWith(
-                color: AppColors.primaryColor,
-              ),
-            ),
             RichText(
               text: TextSpan(
                 children: [

@@ -19,41 +19,36 @@ class PostRepositoryImpl implements PostRepository {
     // The factory provides the appropriate datasource
     final remoteDataSource = _dataSourceFactory.getRemoteDataSource();
 
-    return remoteDataSource
-        .getPosts()
-        .map((postModels) {
-          // Convert PostModel to domain Post entity
-          return postModels.map((model) => model.toEntity()).toList();
-        })
-        .handleError((error) {
-          // Convert Firestore errors to domain failures
-          throw _handleFirestoreError(error);
-        });
+    return remoteDataSource.getPosts().map((postModels) {
+      // Convert PostModel to domain Post entity
+      return postModels.map((model) => model.toEntity()).toList();
+    }).handleError((error) {
+      // Convert Firestore errors to domain failures
+      throw _handleFirestoreError(error);
+    });
   }
 
   @override
+  Future<Either<Failure, void>> createPost({
+    required String authorId,
+    required String authorName,
+    required String content,
+  }) async {
+    try {
+      final remoteDataSource = _dataSourceFactory.getRemoteDataSource();
 
-@override
-Future<Either<Failure, void>> createPost({
-  required String authorId,
-  required String authorName,
-  required String content,
-}) async {
-  try {
-    final remoteDataSource =
-        _dataSourceFactory.getRemoteDataSource();
+      await remoteDataSource.createPost(
+        authorId: authorId,
+        authorName: authorName,
+        content: content,
+      );
 
-    await remoteDataSource.createPost(
-      authorId: authorId,
-      authorName: authorName,
-      content: content,
-    );
-
-    return const Right(null);
-  } catch (error) {
-    return Left(_handleFirestoreError(error));
+      return const Right(null);
+    } catch (error) {
+      return Left(_handleFirestoreError(error));
+    }
   }
-}
+
   // Handles Firestore errors and converts them to user-friendly failures
   Failure _handleFirestoreError(dynamic error) {
     // Handle specific Firestore error codes

@@ -1,4 +1,3 @@
-
 import 'package:connectme_app/presentation/screens/map_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,19 +6,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:connectme_app/core/constants/app_colors.dart';
 import 'package:connectme_app/core/constants/app_images.dart';
 import 'package:connectme_app/core/helper/injection.dart';
-import 'package:connectme_app/core/style/app_text_styles.dart';
-
 import 'package:connectme_app/presentation/blocs/biometric_cubit.dart';
 import 'package:connectme_app/presentation/blocs/biometric_state.dart';
 import 'package:connectme_app/presentation/blocs/post_cubit.dart';
-import 'package:connectme_app/presentation/blocs/post_state.dart';
 
 import 'package:connectme_app/presentation/screens/profile_screen.dart';
 
 import 'package:connectme_app/presentation/widgets/bottom_navigation_bar.dart';
 import 'package:connectme_app/presentation/widgets/category_tabs.dart';
+import 'package:connectme_app/presentation/widgets/create_post_dialog.dart';
 import 'package:connectme_app/presentation/widgets/home_search_bar.dart';
-import 'package:connectme_app/presentation/widgets/post_card.dart';
+import 'package:connectme_app/presentation/widgets/posts_feed.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -39,56 +36,20 @@ class _HomeScreenState extends State<HomeScreen> {
     'Following',
   ];
 
-  final TextEditingController _postController = TextEditingController();
-
-  @override
-  void dispose() {
-    _postController.dispose();
-    super.dispose();
-  }
-
   void _showCreatePostDialog() {
-    final postCubit = context.read<PostCubit>();
-
     showDialog(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: const Text('Create Post'),
-        content: TextField(
-          controller: _postController,
-          maxLines: 5,
-          decoration: const InputDecoration(
-            hintText: "What's on your mind?",
-            border: OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              _postController.clear();
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              final content = _postController.text.trim();
-              final user = FirebaseAuth.instance.currentUser;
+      builder: (dialogContext) => CreatePostDialog(
+        onPostSubmitted: (content) {
+          final user = FirebaseAuth.instance.currentUser;
+          if (user == null) return;
 
-              if (content.isEmpty || user == null) return;
-
-              postCubit.createPost(
-                authorId: user.uid,
-                authorName: user.displayName ?? user.email ?? 'Anonymous',
-                content: content,
-              );
-
-              _postController.clear();
-              Navigator.pop(dialogContext);
-            },
-            child: const Text('Post'),
-          ),
-        ],
+          context.read<PostCubit>().createPost(
+            authorId: user.uid,
+            authorName: user.displayName ?? user.email ?? 'Anonymous',
+            content: content,
+          );
+        },
       ),
     );
   }
@@ -137,7 +98,6 @@ class _HomeScreenState extends State<HomeScreen> {
           builder: (context) {
             return Scaffold(
               backgroundColor: AppColors.white,
-
               body: _currentIndex == 1
                   ? const CommunityMapScreen()
                   : SafeArea(
@@ -191,94 +151,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           const SizedBox(height: 16),
 
                           // Posts feed
-                          Expanded(
-                            child: BlocBuilder<PostCubit, PostState>(
-                              builder: (context, state) {
-                                if (state is PostLoading) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                }
-
-                                if (state is PostError) {
-                                  return Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        const Icon(
-                                          Icons.error_outline,
-                                          size: 48,
-                                          color: AppColors.textGrey,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          state.message,
-                                          style: AppTextStyles.body,
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        const SizedBox(height: 16),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            context
-                                                .read<PostCubit>()
-                                                .loadPosts();
-                                          },
-                                          child: const Text('Retry'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-
-                                if (state is PostLoaded) {
-                                  if (state.posts.isEmpty) {
-                                    return Center(
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          const Icon(
-                                            Icons.feed_outlined,
-                                            size: 64,
-                                            color: AppColors.textGrey,
-                                          ),
-                                          const SizedBox(height: 16),
-                                          Text(
-                                            'No posts yet',
-                                            style: AppTextStyles.body,
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Text(
-                                            'Be the first to share something!',
-                                            style: AppTextStyles.caption,
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }
-
-                                  return ListView.builder(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                    ),
-                                    itemCount: state.posts.length,
-                                    itemBuilder: (context, index) {
-                                      return PostCard(
-                                        post: state.posts[index],
-                                      );
-                                    },
-                                  );
-                                }
-
-                                return const SizedBox.shrink();
-                              },
-                            ),
+                          const Expanded(
+                            child: PostsFeed(),
                           ),
                         ],
                       ),
                     ),
-
               bottomNavigationBar: BottomNavigationBarWidget(
                 currentIndex: _currentIndex,
                 onItemTapped: (index) {

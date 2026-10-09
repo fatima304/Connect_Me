@@ -10,6 +10,7 @@ class BiometricCubit extends Cubit<BiometricState> {
   BiometricCubit(this._dataSource) : super(const BiometricState());
 
   // Integration with local_auth package through data source
+  // Prevents duplicate authentication attempts by checking current state
   Future<void> authenticate() async {
     if (state.status == BiometricStatus.loading) return;
 

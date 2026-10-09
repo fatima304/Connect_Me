@@ -1,4 +1,3 @@
-
 enum ProfileStatus { initial, loading, success, error }
 
 class ProfileState {

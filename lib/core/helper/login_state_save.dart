@@ -1,6 +1,7 @@
-// AuthWrapper checks authentication state on app startup
-// If user is already signed in, skip login screen and go to Home
-// This implements the auth state persistence requirement
+/// AuthWrapper checks authentication state on app startup
+/// If user is already signed in, skip login screen and go to Home
+/// This implements the auth state persistence requirement by listening
+/// to Firebase Auth state changes and reacting accordingly
 import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/presentation/blocs/post_cubit.dart';
 import 'package:connectme_app/presentation/screens/auth_screen.dart';

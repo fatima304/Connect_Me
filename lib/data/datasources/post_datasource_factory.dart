@@ -7,9 +7,10 @@ import 'package:connectme_app/data/datasources/local_post_datasource.dart';
 // This is the actual Factory Design Pattern implementation, not GetIt registration
 class PostDataSourceFactory {
   PostDataSourceFactory({
-    required this._remoteDataSource,
-    required this._localDataSource,
-  });
+    required FirestorePostDataSource remoteDataSource,
+    required LocalPostDataSource localDataSource,
+  })  : _remoteDataSource = remoteDataSource,
+        _localDataSource = localDataSource;
 
   final FirestorePostDataSource _remoteDataSource;
   final LocalPostDataSource _localDataSource;

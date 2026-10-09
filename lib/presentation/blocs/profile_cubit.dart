@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:connectme_app/data/datasources/profile_image_data_source.dart';
@@ -7,6 +6,8 @@ import 'package:connectme_app/services/firestore_service.dart';
 
 import 'profile_state.dart';
 
+// Cubit for managing profile state
+// Handles loading profile data and updating profile pictures
 class ProfileCubit extends Cubit<ProfileState> {
   final AuthService _authService;
   final FirestoreService _firestoreService;
@@ -18,6 +19,8 @@ class ProfileCubit extends Cubit<ProfileState> {
     this._imageDataSource,
   ) : super(const ProfileState());
 
+  // Loads user profile from Firestore and local image storage
+  // Combines user data from Firestore with profile image from local storage
   Future<void> loadProfile() async {
     emit(state.copyWith(status: ProfileStatus.loading));
 
@@ -39,14 +42,11 @@ class ProfileCubit extends Cubit<ProfileState> {
 
       final data = document.data();
 
-      final savedImagePath =
-          await _imageDataSource.getSavedImagePath(user.uid);
+      final savedImagePath = await _imageDataSource.getSavedImagePath(user.uid);
 
       emit(ProfileState(
         status: ProfileStatus.success,
-        fullName: (data?['fullName'] as String?) ??
-            user.displayName ??
-            '',
+        fullName: (data?['fullName'] as String?) ?? user.displayName ?? '',
         email: (data?['email'] as String?) ?? user.email ?? '',
         photoPath: savedImagePath,
       ));
@@ -58,18 +58,27 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
+  // Changes the user's profile picture by picking from device gallery
+  // Saves the image locally and updates the state to trigger UI refresh
+  // Cancelling the picker leaves the existing image unchanged
   Future<void> changeProfileImage() async {
     final user = _authService.currentUser;
 
     if (user == null) return;
 
     try {
-      final imagePath =
-          await _imageDataSource.pickAndSaveImage(user.uid);
+      // Emit loading state to show UI feedback
+      emit(state.copyWith(status: ProfileStatus.loading));
 
-      // If the user cancels image selection, keep the current image.
-      if (imagePath == null) return;
+      final imagePath = await _imageDataSource.pickAndSaveImage(user.uid);
 
+      // If the user cancels image selection, restore the previous state
+      if (imagePath == null) {
+        emit(state.copyWith(status: ProfileStatus.success));
+        return;
+      }
+
+      // Emit new state with updated image path to trigger UI rebuild
       emit(state.copyWith(
         status: ProfileStatus.success,
         photoPath: imagePath,

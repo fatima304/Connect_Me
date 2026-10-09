@@ -69,9 +69,8 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             Container(
               decoration: BoxDecoration(
                 gradient: isFocused && !hasError ? AppColors.primary : null,
-                color: !isFocused && !hasError
-                    ? AppColors.fieldBackground
-                    : null,
+                color:
+                    !isFocused && !hasError ? AppColors.fieldBackground : null,
                 border: hasError
                     ? Border.all(color: AppColors.error, width: 1.5)
                     : null,
@@ -106,7 +105,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
                 ),
               ),
             ),
-
             if (hasError) ...[
               const SizedBox(height: 6),
               Padding(

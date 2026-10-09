@@ -4,6 +4,8 @@ import 'package:connectme_app/domain/entities/user.dart';
 // Data model for User
 // Handles Firestore serialization/deserialization
 // Converts between Firestore data and domain User entity
+// Builder Pattern: The fromJson factory constructor only sets fields that are present
+// in the Firestore data, ensuring only provided fields are set on the model
 class UserModel {
   final String uid;
   final String fullName;
@@ -18,6 +20,7 @@ class UserModel {
   });
 
   // Factory constructor to create UserModel from Firestore data
+  // Only sets fields that are present in the data (Builder Pattern approach)
   factory UserModel.fromJson(Map<String, dynamic> data, String uid) {
     return UserModel(
       uid: uid,

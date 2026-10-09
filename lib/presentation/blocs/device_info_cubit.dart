@@ -26,7 +26,7 @@ class DeviceInfoCubit extends Cubit<DeviceInfoState> {
       emit(
         DeviceInfoState(
           status: DeviceInfoStatus.error,
-          errorMessage: e.toString(),
+          errorMessage: 'Unable to load device information.',
         ),
       );
     }

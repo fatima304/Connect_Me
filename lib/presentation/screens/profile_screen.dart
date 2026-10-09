@@ -22,8 +22,15 @@ class ProfileScreen extends StatelessWidget {
         BlocProvider(create: (_) => getIt<DeviceInfoCubit>()..getDeviceInfo()),
         BlocProvider(create: (_) => getIt<AuthCubit>()),
       ],
-      child: Builder(
-        builder: (context) {
+      child: BlocListener<AuthCubit, AuthState>(
+        listener: (context, state) {
+          // When logout succeeds, AuthCubit emits AuthInitial
+          // Navigate back to the root (AuthWrapper will handle showing login screen)
+          if (state is AuthInitial) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          }
+        },
+        child: Builder(builder: (context) {
           return Scaffold(
             appBar: AppBar(
               title: const Text('My Profile'),
@@ -119,8 +126,9 @@ class ProfileScreen extends StatelessWidget {
                         children: [
                           Stack(
                             children: [
+                              // ValueKey ensures the avatar rebuilds when photoPath changes
                               CircleAvatar(
-                                key: ValueKey(photoPath),
+                                key: ValueKey('profile_$photoPath'),
                                 radius: 60,
                                 backgroundColor: Colors.grey.shade200,
                                 backgroundImage: hasPhoto
@@ -204,7 +212,7 @@ class ProfileScreen extends StatelessWidget {
               },
             ),
           );
-        },
+        }),
       ),
     );
   }

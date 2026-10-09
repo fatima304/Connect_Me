@@ -25,20 +25,19 @@ class LocalPostDataSource {
 
   // Creates a post in the local cache
 
-Future<void> createPost({
-  required String authorId,
-  required String authorName,
-  required String content,
-}) async {
-  final newPost = PostModel(
-    id: DateTime.now().millisecondsSinceEpoch.toString(),
-    authorId: authorId,
-    authorName: authorName,
-    content: content,
-    createdAt: DateTime.now(),
-  );
+  Future<void> createPost({
+    required String authorId,
+    required String authorName,
+    required String content,
+  }) async {
+    final newPost = PostModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      authorId: authorId,
+      authorName: authorName,
+      content: content,
+      createdAt: DateTime.now(),
+    );
 
-  _cachedPosts = [...(_cachedPosts ?? []), newPost];
-}
-
+    _cachedPosts = [...(_cachedPosts ?? []), newPost];
+  }
 }

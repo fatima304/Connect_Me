@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:connectme_app/core/constants/app_colors.dart';
 import 'package:connectme_app/core/constants/app_images.dart';
+import 'package:connectme_app/presentation/widgets/nav_item.dart';
 
 class BottomNavigationBarWidget extends StatelessWidget {
   const BottomNavigationBarWidget({
@@ -42,14 +42,18 @@ class BottomNavigationBarWidget extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildImageNavItem(
+                  NavItem(
                     image: AppImages.home,
                     isSelected: currentIndex == 0,
                     onTap: () => onItemTapped(0),
                   ),
-                  _buildMapNavItem(),
+                  IconNavItem(
+                    icon: Icons.map_outlined,
+                    isSelected: currentIndex == 1,
+                    onTap: () => onItemTapped(1),
+                  ),
                   const SizedBox(width: 56),
-                  _buildImageNavItem(
+                  NavItem(
                     image: AppImages.profile,
                     isSelected: currentIndex == 2,
                     onTap: () => onItemTapped(2),
@@ -91,39 +95,6 @@ class BottomNavigationBarWidget extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildMapNavItem() {
-    final isSelected = currentIndex == 1;
-
-    return GestureDetector(
-      onTap: () => onItemTapped(1),
-      child: Icon(
-        Icons.map_outlined,
-        size: 26,
-        color: isSelected
-            ? AppColors.primaryColor
-            : AppColors.textGrey,
-      ),
-    );
-  }
-
-  Widget _buildImageNavItem({
-    required String image,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Image.asset(
-        image,
-        width: 24,
-        height: 24,
-        color: isSelected
-            ? AppColors.primaryColor
-            : AppColors.textGrey,
       ),
     );
   }

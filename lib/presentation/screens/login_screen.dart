@@ -88,9 +88,9 @@ class _LoginScreenState extends State<LoginScreen> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   context.read<AuthCubit>().login(
-                    email: emailController.text.trim(),
-                    password: passwordController.text,
-                  );
+                        email: emailController.text.trim(),
+                        password: passwordController.text,
+                      );
                 }
               },
             ),

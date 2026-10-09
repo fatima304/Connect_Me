@@ -1,10 +1,7 @@
 import 'package:connectme_app/core/helper/injection.dart';
 import 'package:connectme_app/core/helper/login_state_save.dart';
-import 'package:connectme_app/presentation/screens/auth_screen.dart';
-import 'package:connectme_app/presentation/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'firebase_options.dart';
 
 void main() async {
@@ -26,7 +23,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         useMaterial3: true,
       ),
-      home: const AuthWrapper(), // Use AuthWrapper to handle authentication state
+      home:
+          const AuthWrapper(), // Use AuthWrapper to handle authentication state
     );
   }
 }

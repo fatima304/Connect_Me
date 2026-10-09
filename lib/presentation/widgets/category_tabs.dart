@@ -26,17 +26,15 @@ class CategoryTabs extends StatelessWidget {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.lightPurple
-                    : AppColors.transparent,
+                color:
+                    isSelected ? AppColors.lightPurple : AppColors.transparent,
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
                 category,
                 style: AppTextStyles.smallBody.copyWith(
-                  color: isSelected
-                      ? AppColors.primaryColor
-                      : AppColors.textGrey,
+                  color:
+                      isSelected ? AppColors.primaryColor : AppColors.textGrey,
                 ),
               ),
             ),

@@ -12,6 +12,7 @@ class AuthCubit extends Cubit<AuthState> {
   final AuthRepository _authRepository;
 
   // Convert Firebase exceptions to user-friendly messages
+  // Never exposes raw Firebase error messages to users
   String _getErrorMessage(dynamic error) {
     if (error is firebase_auth.FirebaseAuthException) {
       switch (error.code) {
@@ -77,6 +78,8 @@ class AuthCubit extends Cubit<AuthState> {
   Future<void> logout() async {
     try {
       await _authRepository.logout();
+      // Emit AuthInitial to signal successful logout
+      // AuthWrapper will navigate to login screen when it receives this state
       emit(AuthInitial());
     } catch (e) {
       emit(AuthError(_getErrorMessage(e)));

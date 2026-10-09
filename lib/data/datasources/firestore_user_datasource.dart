@@ -18,10 +18,8 @@ class FirestoreUserDataSource {
 
   // Fetches a user profile by UID
   Future<UserModel?> getUserProfile(String uid) async {
-    final docSnapshot = await _firestoreService.firestore
-        .collection('users')
-        .doc(uid)
-        .get();
+    final docSnapshot =
+        await _firestoreService.firestore.collection('users').doc(uid).get();
 
     if (docSnapshot.exists) {
       return UserModel.fromJson(
